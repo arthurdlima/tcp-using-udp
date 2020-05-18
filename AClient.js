@@ -1,0 +1,10 @@
+class AClient {
+    constructor() {
+
+    }
+
+    connectToServer() {
+
+    }
+
+}
