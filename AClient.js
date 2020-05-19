@@ -1,9 +1,11 @@
-class AClient {
-    constructor() {
+import ATcp from './ATcp';
 
+export default class AClient {
+    constructor(clientSocket) {
+        this.clientSocket = clientSocket;
     }
 
-    connectToServer() {
+    clientWantsFile(serverSocket,fileName) {
 
     }
 

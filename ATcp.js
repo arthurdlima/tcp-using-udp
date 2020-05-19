@@ -23,12 +23,30 @@ class ArthurTcp {
         this.serverSocket = newServerSocket;
     }
 
-    // -------------------------------
+    // --------------------------------------
+
+
+    //------ For SERVER ----------
+
     createTcpServer() {
+        //While aqui infinito
+    }
+    connectToClient() {
+        // 3 way handshake
+    }
+    sendFile(fileName) {
 
     }
-    connect() {
 
+
+    //------ For CLIENT ----------
+
+    connectToServer() {
+        //3 way handshake
+    }
+
+    getFile(fileName) {
+        //depois que tiver connectado..
     }
 
 }
