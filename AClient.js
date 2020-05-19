@@ -11,7 +11,7 @@ class AClient {
     }
 
     clientWantsFile(fileName) {
-
+        this.aclient.requestFile(fileName);
     }
 }
 

@@ -6,6 +6,9 @@ class ATcp {
         //serverBuffer = 0;
         this.Nodebuffer = require('buffer');
         this.NodeUdp = require('dgram');
+
+        this.NodeUdpClient;
+        this.NodeUdpServer;
     }
 
     getClientSocket() {
@@ -27,17 +30,18 @@ class ATcp {
     //------ For SERVER ----------
 
     createTcpServer() {
+        // --- Starting server ---
         console.log("Creating server...");
-
-        const NodeUdpServer = this.NodeUdp.createSocket('udp4');
-        NodeUdpServer.bind(this.serverSocket);
+        this.NodeUdpServer = this.NodeUdp.createSocket('udp4');
+        this.NodeUdpServer.bind(this.serverSocket);
         let serverOn = true;
         setTimeout(() => console.log("Server on! Using port: " + this.serverSocket), 3000);
+        // ------------------------------
 
 
         // emits on new datagram msg
-        NodeUdpServer.on('message', function (msg, info) {
-            console.log('Data received from client : ' + msg.toString());
+        this.NodeUdpServer.on('message', function (msg, info) {
+            console.log("Data received from client : " + msg.toString());
 
         });
 
@@ -55,22 +59,27 @@ class ATcp {
 
     createTcpClient() {
 
+        // --- Starting client server ---
         console.log("Creating tcp client...");
-        const NodeUdpClient = this.NodeUdp.createSocket('udp4');
-        NodeUdpClient.bind(this.clientSocket);
+        this.NodeUdpClient = this.NodeUdp.createSocket('udp4');
+        this.NodeUdpClient.bind(this.clientSocket);
         let clientOn = true;
         setTimeout(() => console.log("client created! Using port " + this.clientSocket), 3000);
-
-
+        // ------------------------------
     }
 
     connectToServer() {
-        //3 way handshake
-
+        //3 way handshake (NOT FINISHED)
+        return true;
     }
 
     requestFile(fileName) {
-        //depois que tiver connectado..
+        //connecting to server.. (will use 3 way handshake)
+        let isConnected = this.connectToServer();
+
+        //Enviando nome do arquivo a buscar
+
+
     }
 
 }
