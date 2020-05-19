@@ -3,11 +3,11 @@ const ATcp = require('./ATcp');
 class AServer {
     constructor(serverSocket) {
         this.serverSocket = serverSocket;
+        this.aserver = new ATcp(null, serverSocket);
     }
 
     serverOn() {
-        const aserver = new ATcp();
-        aserver.createTcpServer();
+        this.aserver.createTcpServer();
     }
 
 }

@@ -4,11 +4,8 @@ class ATcp {
         this.serverSocket = serverSocket;
         //clientBuffer = 0;
         //serverBuffer = 0;
-        let packetsArray = [];
-
-        const buffer = require('buffer');
-        const udp = require('dgram');
-        const udpServer = udp.createSocket('udp4');
+        this.Nodebuffer = require('buffer');
+        this.NodeUdp = require('dgram');
     }
 
     getClientSocket() {
@@ -31,37 +28,39 @@ class ATcp {
 
     createTcpServer() {
         console.log("Creating server...");
-        let serverOn = true;
-        setTimeout(()=> console.log("Server on!"),3000);
-        while (serverOn) {
 
-            if (true) {
-                
-            }
-        }
+        const NodeUdpServer = this.NodeUdp.createSocket('udp4');
+        NodeUdpServer.bind(this.serverSocket);
+        let serverOn = true;
+        setTimeout(() => console.log("Server on! Using port: " + this.serverSocket), 3000);
+
+
+        // emits on new datagram msg
+        NodeUdpServer.on('message', function (msg, info) {
+            console.log('Data received from client : ' + msg.toString());
+
+        });
+
+
     }
     connectToClient() {
         // 3 way handshake
     }
     sendFile(fileName) {
-
+        //let packetsArray = [];
     }
 
 
     //------ For CLIENT ----------
 
     createTcpClient() {
-        const udpClient = udp.createSocket('udp4');
 
         console.log("Creating tcp client...");
+        const NodeUdpClient = this.NodeUdp.createSocket('udp4');
+        NodeUdpClient.bind(this.clientSocket);
         let clientOn = true;
-        setTimeout(() => console.log("client created!"), 3000);
-        while (clientOn) {
+        setTimeout(() => console.log("client created! Using port " + this.clientSocket), 3000);
 
-            if (true) {
-
-            }
-        }
 
     }
 
@@ -70,7 +69,7 @@ class ATcp {
 
     }
 
-    getFile(fileName) {
+    requestFile(fileName) {
         //depois que tiver connectado..
     }
 
@@ -78,3 +77,12 @@ class ATcp {
 
 
 module.exports = ATcp;
+
+/*
+NodeUdpServer.on('listening', function () {
+    let address = NodeUdpServer.address();
+    let port = address.port;
+    console.log('Server is listening at port ' + port);
+
+});
+*/
