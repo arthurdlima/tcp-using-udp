@@ -30,8 +30,15 @@ class ATcp {
     //------ For SERVER ----------
 
     createTcpServer() {
-        //While aqui infinito
-        console.log("Server created");
+        console.log("Creating server...");
+        let serverOn = true;
+        setTimeout(()=> console.log("Server on!"),3000);
+        while (serverOn) {
+
+            if (true) {
+                
+            }
+        }
     }
     connectToClient() {
         // 3 way handshake
@@ -43,8 +50,24 @@ class ATcp {
 
     //------ For CLIENT ----------
 
+    createTcpClient() {
+        const udpClient = udp.createSocket('udp4');
+
+        console.log("Creating tcp client...");
+        let clientOn = true;
+        setTimeout(() => console.log("client created!"), 3000);
+        while (clientOn) {
+
+            if (true) {
+
+            }
+        }
+
+    }
+
     connectToServer() {
         //3 way handshake
+
     }
 
     getFile(fileName) {
