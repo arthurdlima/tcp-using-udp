@@ -1,4 +1,4 @@
-class ArthurTcpPacket {
+class ATcpPacket {
     constructor() {
         sourcePort = 0;
         destinationPort = 0;

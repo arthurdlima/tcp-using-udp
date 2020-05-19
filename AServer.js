@@ -6,6 +6,7 @@ export default class AServer {
     }
 
     serverOn() {
+        const aserver = new ATcp();
         
     }
 

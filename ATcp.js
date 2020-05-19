@@ -1,4 +1,4 @@
-class ArthurTcp {
+class ATcp {
     constructor(clientSocket, serverSocket) {
         this.clientSocket = clientSocket;
         this.serverSocket = serverSocket;
