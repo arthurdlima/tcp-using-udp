@@ -1,13 +1,14 @@
-import ATcp from './ATcp';
+const ATcp = require('./ATcp');
 
-export default class AServer {
+class AServer {
     constructor(serverSocket) {
         this.serverSocket = serverSocket;
     }
 
     serverOn() {
         const aserver = new ATcp();
-        
+        aserver.createTcpServer();
     }
 
 }
+module.exports = AServer;

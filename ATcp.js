@@ -4,10 +4,11 @@ class ATcp {
         this.serverSocket = serverSocket;
         //clientBuffer = 0;
         //serverBuffer = 0;
-        packetsArray = [];
+        let packetsArray = [];
 
-        udp = require('dgram');
-        udpServer = udp.createSocket('udp4');
+        const buffer = require('buffer');
+        const udp = require('dgram');
+        const udpServer = udp.createSocket('udp4');
     }
 
     getClientSocket() {
@@ -30,6 +31,7 @@ class ATcp {
 
     createTcpServer() {
         //While aqui infinito
+        console.log("Server created");
     }
     connectToClient() {
         // 3 way handshake
@@ -50,3 +52,6 @@ class ATcp {
     }
 
 }
+
+
+module.exports = ATcp;

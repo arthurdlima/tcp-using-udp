@@ -1,6 +1,6 @@
-import ATcp from './ATcp';
+const ATcp = require('./ATcp');
 
-export default class AClient {
+class AClient {
     constructor(clientSocket) {
         this.clientSocket = clientSocket;
     }
@@ -10,3 +10,5 @@ export default class AClient {
     }
 
 }
+
+module.exports = AClient;
