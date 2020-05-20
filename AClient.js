@@ -13,6 +13,10 @@ class AClient {
     clientWantsFile(fileName) {
         this.aclient.requestFile(fileName);
     }
+
+    requestServerConnection(serverSocket) {
+        this.aclient.connectToServer(serverSocket);
+    }
 }
 
 module.exports = AClient;

@@ -11,7 +11,7 @@ const aserver = new AServer(3333);
 aserver.serverOn();
 aclient.tcpClientOn();
 
-//Client receiving data from server (no handshake)
-aclient.clientWantsFile('document-x');
+//Client requesting connection to server
+aclient.requestServerConnection(3333);
 
 
