@@ -1,12 +1,16 @@
 class ATcp {
     constructor(clientSocket, serverSocket) {
+
+        //Used for creating client and server object
         this.clientSocket = clientSocket;
         this.serverSocket = serverSocket;
+        //--------------------------------------
 
         this.Nodebuffer = require('buffer');
         this.NodeUdp = require('dgram');
-        this.NodeUdpClient;
+   
         this.NodeUdpServer;
+        this.NodeUdpClient;    
 
         //The packet object that will hold the data
         this.ATcpPacket = require('./ATcpPacket')
@@ -16,9 +20,11 @@ class ATcp {
 
         //connection status (After 3 way handshake, will be "true")
         this.connectionStatus = false;
+        this.connectionPort = 0;
 
         //After connection, expected incial seq. number of the data.
-        this.expectedSeqNumber = 000;
+        this.expectedSeqNumber = 0;
+        const a = 2;
 
     }
 
@@ -45,7 +51,6 @@ class ATcp {
         console.log("Creating server...");
         this.NodeUdpServer = this.NodeUdp.createSocket('udp4');
         this.NodeUdpServer.bind(this.serverSocket);
-        let serverOn = true;
         setTimeout(() => console.log("Server on! Using port: " + this.serverSocket), 2000);
         // ------------------------------
 
@@ -70,10 +75,53 @@ class ATcp {
 
     }
 
-    clientConnectionRequest(connectionPacket) {
+    clientConnectionRequest(clientPacket) {
         // handle 3 way handshake request
 
+        let clientPort = clientPacket.getSourcePort()
+        let clientSequenceN = clientPacket.getSequenceNumber + 1
+        let clientSYNC = clientPacket.getSYN()
 
+        while (true) {
+
+            let handShake1 = false;
+            let handShake2 = false;
+            let handShake3 = false;
+
+            // ---------- HANDSHAKE PART 1 ----------------
+
+            let packet1 = new this.ATcpPacket();
+
+            //setting packet header data
+            packet1.setSourcePort(this.serverSocker);
+            packet1.setDestinationPort(clientPort);
+            packet1.setACK(clientSequenceN);
+            packet1.setSYN(clientSYNC);
+
+            this.NodeUdpServer.send("packet1", clientPort, 'localhost', function (error) {
+                if (error) {
+                    console.log(error);
+                } else {
+                    console.log("1-SYN-ACK sent back to client");
+                }
+            });
+
+            while (!handShake2) {
+                this.NodeUdpServer.on('message', function (msg, info) {
+                    if (msg.ACK == packet1.getSequenceNumber() + 1) {
+                        console.log("ack recieved from server!")
+                        handShake1 = true;
+                    }
+                });
+            }
+
+            // ---------- HANDSHAKE PART 2 ----------------
+
+
+
+
+
+        }
     }
 
     sendFile(fileName) {
@@ -89,15 +137,18 @@ class ATcp {
         console.log("Creating tcp client...");
         this.NodeUdpClient = this.NodeUdp.createSocket('udp4');
         this.NodeUdpClient.bind(this.clientSocket);
-        let clientOn = true;
         setTimeout(() => console.log("client created! Using port " + this.clientSocket), 2000);
         // ------------------------------
+
+
     }
 
     connectToServer(serverSocket) {
-        //3 way handshake 
+
 
         while (true) {
+
+            //3 way handshake 
 
             let handShake1 = false;
             let handShake2 = false;
@@ -108,28 +159,42 @@ class ATcp {
             let packet1 = new this.ATcpPacket();
 
             //setting packet header data
+            packet1.setSourcePort(this.clientSocket);
             packet1.setDestinationPort(serverSocket);
-            packet1.setSequenceNumber(901);
-            packet1.setSYN(100);
+            packet1.setSequenceNumber(90001);
+            packet1.setSYN(10000);
 
-            this.NodeUdpClient.send(fileName, 3333, 'localhost', function (error) {
+            console.log(packet1);
+
+            this.NodeUdpClient.send("packet1", 2222, 'localhost', function (error) {
+                console.log("im in the send method");
                 if (error) {
-                    client.close();
+                    console.log(error);
                 } else {
-                    console.log('Data sent !!!');
+                    console.log("1-handshake packet 1 sent to server!");
                 }
             });
 
+            console.log("im after send method");
+
+
+            this.NodeUdpClient.on('message', function (msg, info) {
+                if (msg.ACK == packet1.getSequenceNumber() + 1) {
+                    console.log("ack recieved from server!")
+                    handShake1 = true;
+                }
+            });
+
+            break;
+        }
+
+            // ---------- HANDSHAKE PART 2 ----------------
+
+
+
+
             
             //---------------------------------------------
-
-
-
-            //If connection is true, break, else keep trying
-            if (this.connectionStatus) {
-                break;
-            }
-        }
 
     }
 

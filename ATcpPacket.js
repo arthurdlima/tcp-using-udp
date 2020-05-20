@@ -2,11 +2,11 @@ class ATcpPacket {
     constructor() {
         this.sourcePort = 0;
         this.destinationPort = 0;
-        this.sequenceNumber = 000;
+        this.sequenceNumber = 0;
 
-        this.SYN = 000;
-        this.ACK = 000;
-        this.FIN = 000;
+        this.SYN = 0;
+        this.ACK = 0;
+        this.FIN = 0;
 
         this.data = null;
     }
