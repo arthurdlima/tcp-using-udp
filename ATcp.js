@@ -50,17 +50,32 @@ class ATcp {
         // ------------------------------
 
 
-        // emits on new datagram msg
+        // emits when recieving packets
         this.NodeUdpServer.on('message', function (msg, info) {
-            console.log("Data received from client : " + msg.toString());
+
+            /*
+              if there is no data, syn is > 0 and server is NOT connected
+              to a client, then it's a connection request
+            */
+            if (msg.data == null && msg.SYN > 0 && this.connectionStatus == false) {
+                this.clientConnectionRequest(msg);
+            }
+
         });
 
 
     }
     connectToClient() {
-        // 3 way handshake
+        // 3 way handshake started from server (example)
 
     }
+
+    clientConnectionRequest(connectionPacket) {
+        // handle 3 way handshake request
+
+
+    }
+
     sendFile(fileName) {
         //let packetsArray = [];
     }
@@ -84,16 +99,18 @@ class ATcp {
 
         while (true) {
 
-            // ------ PART 1 ----------------
+            let handShake1 = false;
+            let handShake2 = false;
+            let handShake3 = false;
+
+            // ---------- HANDSHAKE PART 1 ----------------
+
             let packet1 = new this.ATcpPacket();
 
             //setting packet header data
             packet1.setDestinationPort(serverSocket);
-            packet1.setSequenceNumber(0);
-            packet1.setSYN(true);
-
-
-
+            packet1.setSequenceNumber(901);
+            packet1.setSYN(100);
 
             this.NodeUdpClient.send(fileName, 3333, 'localhost', function (error) {
                 if (error) {
@@ -102,7 +119,9 @@ class ATcp {
                     console.log('Data sent !!!');
                 }
             });
-            //-------------------------------------
+
+            
+            //---------------------------------------------
 
 
 

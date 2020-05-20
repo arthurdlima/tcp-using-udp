@@ -8,7 +8,7 @@ class ATcpPacket {
         this.ACK = 000;
         this.FIN = 000;
 
-        this.data = '';
+        this.data = null;
     }
 
 
