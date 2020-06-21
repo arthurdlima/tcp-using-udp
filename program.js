@@ -46,6 +46,7 @@ servidor.on('message', function (pacoteBufferCliente) {
       numeroHandshake = numeroHandshake+1;
       statusConexao = true;
       console.log('CONNECÃO: ', statusConexao);
+      console.log(' ============= CONNECTADO!!! =============');
       process.exit(1);
     }
 
