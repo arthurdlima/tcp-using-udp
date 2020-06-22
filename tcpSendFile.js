@@ -19,72 +19,107 @@ const pacote = {
 
 
 // ============== ARQUIVO PARA ENVIAR AO CLIENTE ==============
-const arquivo = 'Aula-de-prog-avancada';
+/* Valor do String pode ser alterado, será alterado a quantidade de pacotes */
+const arquivo = 'Lin Tse Min!!!';
 // ============================================================
 
-/* Fazendo loop em cada char da string e adicionando seu valor
-ao campo de dados do pacote. Convertendo cada pacote em buffer,
-e adicionando ao array
-*/
-let array = [];
-arquivo.forEach(char => {
-  const pacote = {
-    sourcePort: portaServidor,
-    destPort: portaCliente,
-    seqNum: 0,
-    ackNum: 0,
-    ACK: false,
-    SYN: false,
-    data: char
-  };
-
-  
-
-})
 
 //let str = JSON.stringify(arquivo);
 
 //let buf = Buffer.from(str);
 
-console.log(buf.length);
+//console.log(array.length);
 
 
+let array = [];
+let nSeq = 0;
 
 process.on('message', (m) => {
   servidor.bind(2222);
   cliente.bind(3333);
-  console.log('========= No processo filho ==========')
-  console.log('Cliente quer o número de sequência :', m.ultimoNseq);
+  console.log(' ')
+  console.log('========= PROCESSO FILHO ==========')
+  console.log(' ')
+  console.log('Cliente quer o pacote de número de sequência :', m.ultimoNseq);
+  nSeq = m.ultimoNseq;
 
+  /* Fazendo loop em cada char da string e adicionando seu valor
+  ao campo de dados do pacote. Convertendo cada pacote em buffer,
+  e adicionando ao array
+  */
+
+  arquivo.split('').forEach(char => {
+    const pacote = {
+      sourcePort: portaServidor,
+      destPort: portaCliente,
+      seqNum: nSeq,
+      ackNum: 0,
+      ACK: false,
+      SYN: false,
+      data: char
+    };
+  let pacoteEmString = JSON.stringify(pacote);
+  let pacoteEmBuffer = Buffer.from(pacoteEmString);
+  array.push(pacoteEmBuffer);
+  nSeq = nSeq+1;
+  })
+  nSeq = nSeq-1;
 
 
   /* Enviando primeiro pacote (em buffer) ao cliente (logo após ele fazer a
     requisição pedindo o num seq 1)
   */
-  servidor.send(pacoteBuffer, portaCliente , 'localhost', function (error) {
+  servidor.send(array[0], portaCliente , 'localhost', function (error) {
       if (error) {
           cliente.close();
       }
+      console.log('Enviando pacote 1 de '+nSeq+ ' para cliente...');
   });
+
 });
 
 
-servidor.on('message', function () {
+servidor.on('message', function (reqEmBuffer) {
+  let reqString = reqEmBuffer.toString();
+  let reqInt = JSON.parse(reqString);
 
-  console.log("eita! Agora recebi");
-});
-
-
-
-
-
-cliente.on('message', function () {
-
-  console.log('ta funcionando client, recebeu');
-
-  cliente.send(buf, portaServidor , 'localhost', function (error) {
+  servidor.send(array[reqInt-1], portaCliente , 'localhost', function (error) {
       if (error) {
           cliente.close();
       }
-    });
+      console.log('Enviando pacote '+ reqInt +' de '+nSeq+ ' para cliente...');
+  });
+
+});
+
+
+
+
+
+cliente.on('message', function (pacoteBuff) {
+  let pacoteString = pacoteBuff.toString();
+  let pacoteObj = JSON.parse(pacoteString);
+
+  if(pacoteObj.seqNum == nSeq) {
+    console.log('Cliente recebeu pacote ' + pacoteObj.seqNum + ' de ' + nSeq +' !!!');
+    console.log(' ')
+    console.log('==== ENVIO DE ARQUIVO COMPLETO! ====')
+    return process.exit(1);
+  }
+
+  let proxPacote = pacoteObj.seqNum + 1;
+  console.log('Cliente recebeu pacote ' + pacoteObj.seqNum + ' de ' + nSeq +' !!!');
+  console.log('Cliente quer pacote ' + proxPacote);
+  console.log(' ');
+
+  let reqEmString = JSON.stringify(proxPacote);
+  let reqEmBuffer = Buffer.from(reqEmString);
+    setTimeout(function() {
+      cliente.send(reqEmBuffer, portaServidor , 'localhost', function (error) {
+          if (error) {
+              cliente.close();
+          }
+        });
+    }, 1000
+  );
 });
