@@ -94,16 +94,25 @@ servidor.on('message', function (reqEmBuffer) {
 
 
 
-
+let arrayPacotesCliente = []
 
 cliente.on('message', function (pacoteBuff) {
   let pacoteString = pacoteBuff.toString();
   let pacoteObj = JSON.parse(pacoteString);
 
+  arrayPacotesCliente.push(pacoteObj);
+
   if(pacoteObj.seqNum == nSeq) {
     console.log('Cliente recebeu pacote ' + pacoteObj.seqNum + ' de ' + nSeq +' !!!');
     console.log(' ')
     console.log('==== ENVIO DE ARQUIVO COMPLETO! ====')
+
+    // Verificando array cliente
+    let arrayArquivo = [];
+    arrayPacotesCliente.forEach(pacote => {
+      arrayArquivo.push(pacote.data);
+    })
+    console.log('Arquivo no cliente -> ', arrayArquivo.join(''));
     return process.exit(1);
   }
 
