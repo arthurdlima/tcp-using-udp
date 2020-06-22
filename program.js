@@ -6,7 +6,8 @@ let cliente = udp.createSocket('udp4');
 servidor.bind(2222);
 cliente.bind(3333);
 
-
+const cp = require('child_process');
+const processoFilho = cp.fork('tcpSendFile.js');
 // Exemplo objeto PACOTE:
 
 const pacote = {
@@ -36,8 +37,15 @@ const portaServidor = 2222;
 // for realizado com sucesso.
 let statusConexao = false;
 let numeroHandshake = 0;
+/*Quando handshake/conexão for estabelecida, guardar o último
+  numero de sequencia (será passado pro processo filho quando
+  fork for realizado)
+*/
+let ultimoNseq = 0;
+
+
 // Emite quando um pacote é recebido
-servidor.on('message', function (pacoteBufferCliente) {
+servidor.on('message', function (pacoteBufferCliente, processoFork) {
     let stringBuffer = pacoteBufferCliente.toString();
     let pacoteDoCliente = JSON.parse(stringBuffer);
 
@@ -45,9 +53,19 @@ servidor.on('message', function (pacoteBufferCliente) {
       console.log('SYN-ACK RECEBIDO!');
       numeroHandshake = numeroHandshake+1;
       statusConexao = true;
+      ultimoNseq = pacoteDoCliente.seqNum;
       console.log('CONNECÃO: ', statusConexao);
       console.log(' ============= CONNECTADO!!! =============');
-      process.exit(1);
+      //Só para não dar conflito com processo filho
+      servidor.close();
+      cliente.close();
+
+      /*enviando o ultimo num de sequencia para processo filho, onde
+        será realizado todo envio dos pacotes para cliente
+      */
+      processoFilho.send({ultimoNseq: ultimoNseq });
+      return;
+
     }
 
 
@@ -70,7 +88,7 @@ servidor.on('message', function (pacoteBufferCliente) {
       setTimeout(function() {
       servidor.send(pacoteParaClienteBUFFER, portaCliente , 'localhost', function (error) {
           if (error) {
-              client.close();
+              cliente.close();
           } else {
               numeroHandshake = numeroHandshake + 1;
               console.log('DADOS ENVIADO !');
@@ -155,8 +173,5 @@ cliente.on('message', function (pacoteBufferServidor) {
   );
     }
 });
-
-
-
 
 // ======================== FIM 3 WAY HANDSHAKE ===================================
